@@ -39,6 +39,7 @@ export default defineConfig({
     server: {
         host: "localhost",
         port: 7600,
+        cors: true, // 允许跨域
     },
     resolve: {
         alias: {
