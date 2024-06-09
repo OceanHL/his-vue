@@ -1,0 +1,64 @@
+/**
+ * 验证是否为空或者空字符串
+ * @param s string
+ * @returns boolean
+ */
+export function isBlank(s: string) {
+    return s == null || s.length == 0;
+}
+
+/**
+ * 验证邮箱
+ * @param s string
+ * @returns boolean
+ */
+export function isEmail(s: string) {
+    return /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+((.[a-zA-Z0-9_-]{2,3}){1,2})$/.test(
+        s
+    );
+}
+
+/**
+ * 验证手机号码
+ * @param s string
+ * @returns boolean
+ */
+export function isMobile(s: string) {
+    return /^1[1-9]\d{9}$/.test(s);
+}
+
+/**
+ *验证URL地址
+ * @param s string
+ * @returns boolean
+ */
+export function isURL(s: string) {
+    return /^http[s]?:\/\/.*/.test(s);
+}
+
+/**
+ * 验证用户名
+ * @param s string
+ * @returns boolean
+ */
+export function isUsername(s: string) {
+    return /^[a-zA-Z0-9]{5,50}$/.test(s);
+}
+
+/**
+ * 验证密码
+ * @param s string
+ * @returns boolean
+ */
+export function isPassword(s: string) {
+    return /^[a-zA-Z0-9]{6,20}$/.test(s);
+}
+
+/**
+ * 验证手机短信验证码
+ * @param s string
+ * @returns boolean
+ */
+export function isSmsCode(s: string) {
+    return /^\d{6}$/.test(s);
+}

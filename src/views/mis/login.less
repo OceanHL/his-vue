@@ -1,0 +1,74 @@
+@import url(../style.less);
+
+.page {
+    background-image: url(@/assets/login/bg.jpg);
+    background-size: cover; // 背景图像覆盖
+    background-position: center; // 背景图像居中
+    height: 100%;
+    display: flex;
+    align-items: center;
+    .panel {
+        display: flex;
+        width: 35%;
+        min-width: 800px;
+        margin: 0 auto;
+        background-color: #fff;
+        border-radius: 10px;
+        padding: 50px 60px 40px 60px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        // 图片
+        .left {
+            width: 47%;
+            box-sizing: border-box; // 标准盒模型
+            .logo {
+                width: 85%;
+                display: block;
+                margin-bottom: 25px;
+            }
+            .big {
+                width: 85%;
+                display: block;
+            }
+        }
+        // 输入框
+        .right {
+            width: 53%;
+            .title-container {
+                display: flex;
+                margin-top: 10px;
+                margin-bottom: 30px;
+                h2 {
+                    font-size: 30px;
+                    color: @fc-33;
+                    margin: 0;
+                }
+                span {
+                    font-size: 16px;
+                    margin-top: 12px;
+                    margin-left: 10px;
+                    color: @fc-8;
+                }
+            }
+        }
+        .row {
+            margin-bottom: 23px;
+            text-align: center; // 水平居中
+        }
+        .btn {
+            width: 100%;
+        }
+        .link {
+            font-size: 14px;
+            color: @fc-8;
+            cursor: pointer;
+            user-select: none;
+        }
+        .qrCode-container {
+            display: flex;
+            margin-bottom: 30px;
+            .qrCode {
+                margin-right: 0px;
+            }
+        }
+    }
+}

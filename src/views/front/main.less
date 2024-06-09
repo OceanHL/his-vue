@@ -1,0 +1,154 @@
+@import url(../style.less); // 加载全局样式
+
+// 容器
+.container {
+    width: 1200px;
+    margin: auto; // 容器水平居中
+}
+// 导航区
+header {
+    padding-top: 30px;
+    overflow: hidden; // 防止出现高度坍塌
+    user-select: none; // 禁止用户选择文本
+    display: flex;
+    // logo
+    .logo-container {
+        display: flex;
+        justify-content: center;
+        cursor: pointer; // 设置光标样式为手型
+        .logo {
+            width: 80px;
+            height: auto;
+            margin-right: 13px;
+        }
+        h3 {
+            font-size: 34px;
+            margin: 3px 0px;
+            color: @fc-1;
+        }
+        p {
+            font-size: 18px;
+            margin: 0;
+            color: @fc-1;
+        }
+    }
+    // 搜索
+    .search-container {
+        margin-left: 100px;
+        margin-top: 5px;
+        .keyword-input {
+            width: 400px;
+            margin-bottom: 10px;
+        }
+        .tag {
+            margin-left: 10px;
+        }
+    }
+    // 登录/注册
+    .operate-container {
+        align-self: center;
+        flex: 1;
+        text-align: right;
+    }
+}
+// 页脚区
+footer {
+    margin-top: 50px;
+    // 关于我们区域
+    .aboutus-container {
+        background-color: @bgc-1;
+        user-select: none;
+        .list {
+            width: 1200px; // 设置列表宽度
+            margin: 0 auto; // 设置列表居中
+            padding: 0;
+            list-style: none; // 去除列表样式
+            display: flex; // 设置为flex布局
+            justify-content: space-between; // 设置flex项在主轴方向上的对齐方式为两端对齐
+            .item {
+                box-sizing: border-box; // 设置盒子模型为标准盒子模型
+                width: 285px;
+                display: flex;
+                padding: 20px 10px;
+                img {
+                    width: 58px;
+                    height: 58px;
+                    margin: 10px;
+                    display: block; // 解决img下方空白问题
+                }
+                div {
+                    h3 {
+                        font-size: 20px;
+                        color: @fc-1;
+                        margin: 10px 0 5px 0;
+                    }
+                    p {
+                        font-size: 12px;
+                        color: @fc-3;
+                        margin: 0;
+                    }
+                }
+            }
+        }
+    }
+    // 联系我们区域
+    .other-container {
+        background-color: @bgc-28;
+        padding: 20px 0 10px 0;
+        user-select: none;
+        .list {
+            width: 1200px;
+            margin: 0 auto;
+            padding: 0;
+            list-style: none;
+            display: flex;
+            justify-content: space-between;
+            .left {
+                align-self: center;
+                // padding-top: 30px;
+                img {
+                    width: 200px;
+                }
+                .tel {
+                    margin: 0;
+                    color: #fff;
+                    font-size: 28px;
+                }
+            }
+            .link-list {
+                margin: 0;
+                padding: 0;
+                list-style: none;
+                li:first-child {
+                    // 第一个li加粗
+                    font-weight: bold;
+                }
+                a {
+                    color: #fff;
+                    font-size: 14px;
+                    display: block; //
+                    margin-bottom: 10px;
+                }
+            }
+            .right {
+                display: flex;
+                .ercode {
+                    // ercode作为父元素中的第一个儿子
+                    &:first-child {
+                        margin-right: 20px;
+                    }
+                    p {
+                        color: #fff;
+                        font-size: 14px;
+                        text-align: center;
+                        margin: 0 0 8px 0;
+                    }
+                    img {
+                        width: 110px;
+                        display: block;
+                    }
+                }
+            }
+        }
+    }
+}

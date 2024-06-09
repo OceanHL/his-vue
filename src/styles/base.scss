@@ -1,0 +1,36 @@
+html {
+    height: 100%;
+    font-family: "微软雅黑", "Helvetica Neue", Georgia, "Helvetica Neue",
+        "Menlo";
+}
+
+body {
+    margin: 0;
+    height: inherit;
+}
+
+a {
+    text-decoration: none;
+}
+
+#app {
+    font-family: "Avenir", Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    height: inherit; // 与body一样高
+}
+
+// h1,
+// h2,
+// h3,
+// h4,
+// h5,
+// h6 {
+//     margin-top: 0;
+//     margin-bottom: 0;
+// }
+
+// p {
+//     margin-top: 0;
+//     margin-bottom: 0;
+// }
