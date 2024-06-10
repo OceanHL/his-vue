@@ -6,7 +6,7 @@ import { ElMessage } from "element-plus";
 import router from "@/router";
 
 // 后端项目的URL根路径
-export const baseUrl = "http://localhost:7700/his-api";
+export const baseUrl = "https://localhost:7700/his-api";
 
 // Minio服务器渎职
 export const minioUrl = "http://localhost:9000/his";
