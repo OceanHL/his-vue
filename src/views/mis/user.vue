@@ -1,4 +1,5 @@
 <template>
+    <!-- 表单、表格 -->
     <div>
         <!-- 查询表单 -->
         <el-form :inline="true" :model="dataForm" :rules="dataRule" ref="form">
@@ -236,12 +237,156 @@
             layout="total, sizes, prev, pager, next, jumper"
         ></el-pagination>
     </div>
+    <!-- 弹窗 -->
+    <el-dialog
+        :title="!dialogData.dataForm.id ? '新增' : '修改'"
+        :close-on-click-modal="false"
+        v-model="dialogVisible"
+        width="450px"
+    >
+        <!-- 新增、修改表单 -->
+        <el-form
+            :model="dialogData.dataForm"
+            :rules="dialogData.dataRule"
+            ref="dialogForm"
+            label-width="80px"
+        >
+            <!-- 用户名 -->
+            <el-form-item label="用户名" prop="username">
+                <el-input
+                    v-model="dialogData.dataForm.username"
+                    maxlength="20"
+                    clearable
+                />
+            </el-form-item>
+            <!-- 密码【为修改时，才显示】 -->
+            <el-form-item
+                label="密码"
+                prop="password"
+                v-if="!dialogData.update"
+            >
+                <el-input
+                    type="password"
+                    v-model="dialogData.dataForm.password"
+                    maxlength="20"
+                    clearable
+                />
+            </el-form-item>
+            <!-- 姓名 -->
+            <el-form-item label="姓名" prop="name">
+                <el-input
+                    v-model="dialogData.dataForm.name"
+                    maxlength="10"
+                    clearable
+                />
+            </el-form-item>
+            <!-- 性别 -->
+            <el-form-item label="性别" prop="sex">
+                <el-select v-model="dialogData.dataForm.sex" clearable>
+                    <el-option
+                        v-for="item in sexList"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value"
+                    ></el-option>
+                </el-select>
+            </el-form-item>
+            <!-- 电话 -->
+            <el-form-item label="电话" prop="tel">
+                <el-input
+                    v-model="dialogData.dataForm.tel"
+                    maxlength="11"
+                    clearable
+                />
+            </el-form-item>
+            <!-- 邮箱 -->
+            <el-form-item label="邮箱" prop="email">
+                <el-input
+                    v-model="dialogData.dataForm.email"
+                    maxlength="200"
+                    clearable
+                />
+            </el-form-item>
+            <!-- 入职日期 -->
+            <el-form-item label="入职日期" prop="hiredate">
+                <el-date-picker
+                    v-model="dialogData.dataForm.hiredate"
+                    type="date"
+                    placeholder="选择日期"
+                    :editable="false"
+                    format="YYYY-MM-DD"
+                    value-format="YYYY-MM-DD"
+                    class="dialog-input"
+                    clearable
+                ></el-date-picker>
+            </el-form-item>
+            <!-- 角色 -->
+            <el-form-item label="角色" prop="role">
+                <el-select
+                    v-model="dialogData.dataForm.role"
+                    placeholder="选择角色"
+                    class="dialog-input"
+                    multiple
+                    clearable
+                >
+                    <el-option
+                        v-for="item in dialogData.roleList"
+                        :key="item.id"
+                        :label="item.roleName"
+                        :value="item.id"
+                        :disabled="item.roleName == '超级管理员'"
+                    ></el-option>
+                </el-select>
+            </el-form-item>
+            <!-- 部门 -->
+            <el-form-item label="部门" prop="deptId">
+                <el-select
+                    v-model="dialogData.dataForm.deptId"
+                    placeholder="选择部门"
+                    class="dialog-input"
+                    clearable
+                >
+                    <el-option
+                        v-for="item in dialogData.deptList"
+                        :key="item.id"
+                        :label="item.deptName"
+                        :value="item.id"
+                    ></el-option>
+                </el-select>
+            </el-form-item>
+            <!-- 在职状态 -->
+            <el-form-item label="状态" prop="status">
+                <el-select
+                    v-model="dialogData.dataForm.status"
+                    placeholder="状态"
+                    clearable
+                >
+                    <el-option
+                        v-for="item in employmentStatus"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value"
+                    ></el-option>
+                </el-select>
+            </el-form-item>
+        </el-form>
+        <!-- 取消、确定 -->
+        <template #footer>
+            <span class="dialog-footer">
+                <el-button @click="dialogData.visible = false">取消</el-button>
+                <el-button type="primary" @click="dataFormSubmit">
+                    确定
+                </el-button>
+            </span>
+        </template>
+    </el-dialog>
 </template>
 
 <script setup lang="ts">
 import { reactive } from "vue";
 import type { ComponentInternalInstance } from "vue";
 import { PERMISSION } from "@/utils/isAuth";
+import { dayjs } from "element-plus";
 
 // 全局实例
 const { proxy, appContext } = getCurrentInstance() as ComponentInternalInstance;
@@ -254,11 +399,11 @@ const { ROOT, USER_INSERT, USER_DELETE, USER_UPDATE } = PERMISSION;
 const employmentStatus = [
     {
         label: "在职",
-        value: "1",
+        value: 1,
     },
     {
         label: "离职",
-        value: "2",
+        value: 2,
     },
 ];
 
@@ -308,6 +453,109 @@ const tableData = reactive({
     selections: [], // 勾选中的行
 });
 
+// 弹窗显示，调试完静态页面后，需修改为false【ElementPlus最新版本只能用 ref 当作弹框显示属性】
+const dialogVisible = ref(true);
+// 弹窗数据
+const dialogData = reactive({
+    visible: true, // 弹窗显示，调试完静态页面后，需修改为false
+    update: false, // 是否为修改
+    dataForm: {
+        id: null,
+        username: null,
+        password: null,
+        name: null,
+        sex: null,
+        tel: null,
+        email: null,
+        hiredate: dayjs(new Date()).format("YYYY-MM-DD"),
+        role: null,
+        deptId: null,
+        status: 1, // 在职状态：1-在职、2-离职
+    },
+    dataRule: {
+        username: [
+            {
+                required: true,
+                message: "用户名不能为空",
+            },
+            {
+                pattern: "^[a-zA-Z0-9]{5,20}$",
+                message: "用户名格式错误",
+            },
+        ],
+        password: [
+            {
+                required: true,
+                message: "密码不能为空",
+            },
+            {
+                pattern: "^[a-zA-Z0-9]{6,20}$",
+                message: "密码格式错误",
+            },
+        ],
+        name: [
+            {
+                required: true,
+                message: "姓名不能为空",
+            },
+            {
+                pattern: "^[\u4e00-\u9fa5]{2,10}$",
+                message: "姓名格式错误",
+            },
+        ],
+        sex: [
+            {
+                required: true,
+                message: "性别不能为空",
+            },
+        ],
+        tel: [
+            {
+                required: true,
+                message: "手机号不能为空",
+            },
+            {
+                pattern: "^1[3-9]{1}[0-9]{9}$",
+                message: "手机号格式错误",
+            },
+        ],
+        email: [
+            {
+                required: true,
+                message: "邮箱不能为空",
+            },
+            {
+                pattern: "^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\\.[a-zA-Z0-9_-]+)+$",
+                message: "邮箱格式错误",
+            },
+        ],
+        hiredate: [
+            {
+                required: true,
+                message: "入职日期不能为空",
+            },
+        ],
+        role: [
+            {
+                required: true,
+                message: "角色不能为空",
+            },
+        ],
+        deptId: [
+            {
+                required: true,
+                message: "部门不能为空",
+            },
+        ],
+        status: [
+            {
+                required: true,
+                message: "在职状态不能为空",
+            },
+        ],
+    },
+});
+
 // 查询
 const searchHandle = () => {};
 
@@ -331,6 +579,13 @@ const sizeChangeHandle = () => {};
 
 // 当前页改变
 const currentChangeHandle = () => {};
+
+// 弹窗-数据提交
+const dataFormSubmit = () => {};
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.dialog-input {
+    width: 100% !important;
+}
+</style>
