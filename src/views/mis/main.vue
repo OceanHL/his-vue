@@ -27,8 +27,10 @@
                 <div class="switch" @click="handleSwitch">
                     <SvgIcon name="zhedie" class="icon-svg" />
                 </div>
+                <!-- 用户信息 -->
                 <div class="right-container">
                     <el-dropdown>
+                        <!-- 用户名 -->
                         <span class="el-dropdown-link">
                             <span class="avatar-container">
                                 <el-avatar
@@ -40,6 +42,7 @@
                             </span>
                             {{ user.name }}
                         </span>
+                        <!-- 修改密码、退出 -->
                         <template #dropdown>
                             <el-dropdown-menu>
                                 <el-dropdown-item @click="updatePassword">
@@ -58,6 +61,7 @@
         <!-- 左侧菜单栏区域 -->
         <aside class="site-sidebar site-sidebar--dark">
             <div class="site-sidebar__inner">
+                <!-- 菜单栏 -->
                 <el-menu
                     :default-active="siteContent.menuActiveName || 'Home'"
                     :collapse="sidebar.sidebarFold"
@@ -69,6 +73,7 @@
                     active-text-color="#fff"
                     text-color="#8a979e"
                 >
+                    <!-- 首页 -->
                     <el-menu-item
                         index="Home"
                         @click="$router.push({ name: 'MisHome' })"
@@ -78,6 +83,7 @@
                         </el-icon>
                         <span slot="title">首页</span>
                     </el-menu-item>
+                    <!-- 组织管理 -->
                     <el-sub-menu
                         index="组织管理"
                         :popper-class="
@@ -92,6 +98,7 @@
                             </el-icon>
                             <span slot="title">组织管理</span>
                         </template>
+                        <!-- 部门管理 -->
                         <el-menu-item
                             index="MisDept"
                             @click="router.push({ name: 'MisDept' })"
@@ -101,6 +108,7 @@
                             </el-icon>
                             <span slot="title">部门管理</span>
                         </el-menu-item>
+                        <!-- 角色管理 -->
                         <el-menu-item
                             index="MisRole"
                             @click="$router.push({ name: 'MisRole' })"
@@ -110,6 +118,7 @@
                             </el-icon>
                             <span slot="title">角色管理</span>
                         </el-menu-item>
+                        <!-- 用户管理 -->
                         <el-menu-item
                             index="MisUser"
                             @click="$router.push({ name: 'MisUser' })"
@@ -120,6 +129,7 @@
                             <span slot="title">用户管理</span>
                         </el-menu-item>
                     </el-sub-menu>
+                    <!-- 业务管理 -->
                     <el-sub-menu
                         index="业务管理"
                         :popper-class="
@@ -134,6 +144,7 @@
                             </el-icon>
                             <span slot="title">业务管理</span>
                         </template>
+                        <!-- 体检套餐 -->
                         <el-menu-item
                             index="MisGoods"
                             v-if="isAuth(['ROOT', 'GOODS:SELECT'])"
@@ -144,6 +155,7 @@
                             </el-icon>
                             <span slot="title">体检套餐</span>
                         </el-menu-item>
+                        <!-- 促销规则 -->
                         <el-menu-item
                             index="MisRule"
                             v-if="isAuth(['ROOT', 'RULE:SELECT'])"
@@ -154,6 +166,7 @@
                             </el-icon>
                             <span slot="title">促销规则</span>
                         </el-menu-item>
+                        <!-- 客户档案 -->
                         <el-menu-item
                             index="MisCustomer"
                             v-if="isAuth(['ROOT', 'CUSTOMER:SELECT'])"
@@ -167,6 +180,7 @@
                             </el-icon>
                             <span slot="title">客户档案</span>
                         </el-menu-item>
+                        <!-- 订单管理 -->
                         <el-menu-item
                             index="MisOrder"
                             v-if="isAuth(['ROOT', 'ORDER:SELECT'])"
@@ -177,6 +191,7 @@
                             </el-icon>
                             <span slot="title">订单管理</span>
                         </el-menu-item>
+                        <!-- 客服IM -->
                         <el-menu-item
                             index="MisCustomerIm"
                             v-if="isAuth(['ROOT', 'CUSTOMER:SELECT'])"
@@ -188,6 +203,7 @@
                             <span slot="title">客服IM</span>
                         </el-menu-item>
                     </el-sub-menu>
+                    <!-- 体检管理 -->
                     <el-sub-menu
                         index="体检管理"
                         :popper-class="
@@ -202,6 +218,7 @@
                             </el-icon>
                             <span slot="title">体检管理</span>
                         </template>
+                        <!-- 体检预约 -->
                         <el-menu-item
                             index="MisAppointment"
                             v-if="isAuth(['ROOT', 'APPOINTMENT:SELECT'])"
@@ -215,6 +232,7 @@
                             </el-icon>
                             <span slot="title">体检预约</span>
                         </el-menu-item>
+                        <!-- 体检签到 -->
                         <el-menu-item
                             index="MisCustomerCheckin"
                             v-if="isAuth(['ROOT', 'CUSTOMER_CHICKIN:SELECT'])"
@@ -227,6 +245,7 @@
                             </el-icon>
                             <span slot="title">体检签到</span>
                         </el-menu-item>
+                        <!-- 预约设置 -->
                         <el-menu-item
                             index="MisAppointmentRestriction"
                             v-if="
@@ -246,6 +265,7 @@
                             </el-icon>
                             <span slot="title">预约设置</span>
                         </el-menu-item>
+                        <!-- 医生检查 -->
                         <el-menu-item
                             index="MisCheckup"
                             v-if="isAuth(['ROOT', 'CHECKUP:SELECT'])"
@@ -256,6 +276,7 @@
                             </el-icon>
                             <span slot="title">医生检查</span>
                         </el-menu-item>
+                        <!-- 体检报告 -->
                         <el-menu-item
                             index="MisCheckupReport"
                             v-if="isAuth(['ROOT', 'CHECKUP_REPORT:SELECT'])"
@@ -267,6 +288,7 @@
                             <span slot="title">体检报告</span>
                         </el-menu-item>
                     </el-sub-menu>
+                    <!-- 系统设置 -->
                     <el-sub-menu
                         index="系统设置"
                         :popper-class="
@@ -336,6 +358,54 @@
 
         <!-- 避免路由引用页面的时候浏览器不刷新内容（加载缓存），给URL添加随机数参数 -->
         <!-- <router-view :key="router.currentRoute.value.query.random" /> -->
+
+        <!-- 修改密码弹窗 -->
+        <el-dialog title="提示" v-model="dialogVisible" width="25%">
+            <el-form
+                :model="dialog.dataForm"
+                :rules="dialog.dataRule"
+                ref="dialogForm"
+                label-width="80px"
+            >
+                <el-form-item label="原密码" prop="password">
+                    <el-input
+                        type="password"
+                        v-model="dialog.dataForm.password"
+                        placeholder="原密码"
+                        maxlength="20"
+                        clearable
+                    />
+                </el-form-item>
+                <el-form-item label="新密码" prop="newPassword">
+                    <el-input
+                        type="password"
+                        v-model="dialog.dataForm.newPassword"
+                        maxlength="20"
+                        clearable
+                        placeholder="新密码"
+                    />
+                </el-form-item>
+                <el-form-item label="确认密码" prop="confirmPassword">
+                    <el-input
+                        type="password"
+                        v-model="dialog.dataForm.confirmPassword"
+                        maxlength="20"
+                        clearable
+                        placeholder="确认密码"
+                    />
+                </el-form-item>
+            </el-form>
+            <template #footer>
+                <span class="dialog-footer">
+                    <el-button @click="dialog.visible = false">
+                        取 消
+                    </el-button>
+                    <el-button type="primary" @click="dialogFormSubmit">
+                        确 定
+                    </el-button>
+                </span>
+            </template>
+        </el-dialog>
     </div>
 </template>
 
@@ -354,6 +424,11 @@ const route = useRoute();
 const router = useRouter();
 const { proxy, appContext } = getCurrentInstance() as ComponentInternalInstance;
 const isAuth = appContext.config.globalProperties.$isAuth;
+const http = appContext.config.globalProperties.$http;
+
+// loading加载
+const loading = ref(false);
+
 // 左边-菜单栏常量
 const sidebar = reactive({
     sidebarFold: false, // 是否折叠左边栏
@@ -380,6 +455,52 @@ const user = reactive({
     updatePasswordVisible: false, // 修改密码弹窗是否显示
 });
 
+// 修改密码弹窗是否显示
+const dialogVisible = ref(true);
+// 再次输入密码校验
+const validateConfirmPassword = (rule, value, callback) => {
+    if (value != dialog.dataForm.newPassword) {
+        callback(new Error("两次输入的密码不一致"));
+    } else {
+        callback();
+    }
+};
+// 修改密码弹窗相关常量
+const dialog = reactive({
+    dataForm: {
+        password: "",
+        newPassword: "",
+        confirmPassword: "",
+    },
+    dataRule: {
+        password: [
+            {
+                required: true,
+                pattern: "^[a-zA-Z0-9]{6,20}$",
+                message: "密码格式错误",
+            },
+        ],
+        newPassword: [
+            {
+                required: true,
+                pattern: "^[a-zA-Z0-9]{6,20}$",
+                message: "密码格式错误",
+            },
+        ],
+        confirmPassword: [
+            {
+                required: true,
+                pattern: "^[a-zA-Z0-9]{6,20}$",
+                message: "密码格式错误",
+            },
+            {
+                validator: validateConfirmPassword,
+                trigger: "blur",
+            },
+        ],
+    },
+});
+
 // 菜单栏折叠
 const handleSwitch = () => {
     sidebar.sidebarFold = !sidebar.sidebarFold;
@@ -392,6 +513,7 @@ const handleClose = (key: string, keyPath: string[]) => {
     console.log(key, keyPath);
 };
 
+// 路径跳转
 const routeHandle = (route) => {
     // 每次切换页面时，重新计算页面高度和内容区高度
     resetDocumentClientHeight();
@@ -476,6 +598,7 @@ window.onresize = () => {
     loadSiteContentViewHeight();
 };
 
+// 选中某个菜单tab
 const selectedTabHandle = (tab) => {
     router.push({
         // 使用Vue页面路由作为Tab面板的名字
@@ -483,6 +606,7 @@ const selectedTabHandle = (tab) => {
     });
 };
 
+// 关闭某个菜单tab
 const removeTabHandle = (tabName: string) => {
     // 从mainTabs数组中删除要关闭的Tab【保留不等于tabName的Tab】
     siteContent.mainTabs = siteContent.mainTabs.filter(
@@ -503,6 +627,20 @@ const removeTabHandle = (tabName: string) => {
         router.push({ name: "MisHome" });
     }
 };
+
+// 退出登录
+const logout = () => {
+    http("/mis/user/logout", "GET", null, true, (resp) => {
+        localStorage.removeItem("token");
+        localStorage.removeItem("permissions");
+        router.push({ name: "MisLogin" });
+    });
+};
+
+// 修改密码，显示密码修改弹框
+const updatePassword = () => {};
+
+const dialogFormSubmit = () => {};
 </script>
 
 <style scoped lang="scss">
