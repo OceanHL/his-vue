@@ -65,14 +65,23 @@
 <script setup lang="ts">
 // 当用户登录成功后，需要使用路由对象跳转页面
 import { useRouter } from "vue-router";
+import { isUsername, isPassword } from "../../utils/validate";
+
 const router = useRouter();
 // router.push("/");
 
-const { proxy } = getCurrentInstance();
+const {
+    proxy,
+    appContext: {
+        config: {
+            globalProperties: { $http },
+        },
+    },
+} = getCurrentInstance();
 
 const loginForm = reactive({
-    username: null,
-    password: null,
+    username: "admin",
+    password: "abc123456",
 });
 
 // 这部分内容将来给APP程序使用
@@ -84,7 +93,49 @@ const qr = reactive({
     loginTimer: null,
 });
 
-const login = () => {};
+const login = () => {
+    console.log(loginForm);
+    // 验证用户名不正确【5-50位】
+    if (!isUsername(loginForm.username)) {
+        proxy.$message({
+            message: "用户名不正确",
+            type: "error",
+            duration: 1200,
+        });
+        return;
+    }
+    // 验证密码不正确
+    if (!isPassword(loginForm.password)) {
+        proxy.$message({
+            message: "密码格式错误",
+            type: "error",
+            duration: 1200,
+        });
+        return;
+    }
+
+    // 用户密码验证正确
+    const data = toValue(loginForm);
+
+    // 发送请求
+    $http("/mis/user/login", "post", data, true, (resp) => {
+        if (resp.result) {
+            const permissions = resp.permissions;
+            const token = resp.token;
+            // 向浏览器storage保存令牌和权限列表
+            localStorage.setItem("permissions", permissions);
+            localStorage.setItem("token", token);
+            // 跳转到Mis端首页
+            router.push({ name: "MisHome" });
+        } else {
+            proxy.$message({
+                message: "登录失败",
+                type: "error",
+                duration: 1200,
+            });
+        }
+    });
+};
 </script>
 
 <style lang="less" scoped>

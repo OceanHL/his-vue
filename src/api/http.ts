@@ -18,7 +18,7 @@ export function http(
     url: string,
     method: MethodType,
     data: any, // 请求体数据
-    async: boolean = true,
+    async: boolean = true, // 是否异步请求
     fun: Function
 ) {
     $.ajax({
