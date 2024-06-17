@@ -358,55 +358,57 @@
 
         <!-- 避免路由引用页面的时候浏览器不刷新内容（加载缓存），给URL添加随机数参数 -->
         <!-- <router-view :key="router.currentRoute.value.query.random" /> -->
-
-        <!-- 修改密码弹窗 -->
-        <el-dialog title="提示" v-model="dialogVisible" width="25%">
-            <el-form
-                :model="dialog.dataForm"
-                :rules="dialog.dataRule"
-                ref="dialogForm"
-                label-width="80px"
-            >
-                <el-form-item label="原密码" prop="password">
-                    <el-input
-                        type="password"
-                        v-model="dialog.dataForm.password"
-                        placeholder="原密码"
-                        maxlength="20"
-                        clearable
-                    />
-                </el-form-item>
-                <el-form-item label="新密码" prop="newPassword">
-                    <el-input
-                        type="password"
-                        v-model="dialog.dataForm.newPassword"
-                        maxlength="20"
-                        clearable
-                        placeholder="新密码"
-                    />
-                </el-form-item>
-                <el-form-item label="确认密码" prop="confirmPassword">
-                    <el-input
-                        type="password"
-                        v-model="dialog.dataForm.confirmPassword"
-                        maxlength="20"
-                        clearable
-                        placeholder="确认密码"
-                    />
-                </el-form-item>
-            </el-form>
-            <template #footer>
-                <span class="dialog-footer">
-                    <el-button @click="dialog.visible = false">
-                        取 消
-                    </el-button>
-                    <el-button type="primary" @click="dialogFormSubmit">
-                        确 定
-                    </el-button>
-                </span>
-            </template>
-        </el-dialog>
     </div>
+
+    <!-- 修改密码弹窗 -->
+    <el-dialog title="提示" v-model="dialogVisible" width="25%">
+        <el-form
+            :model="dialog.dataForm"
+            :rules="dialog.dataRule"
+            ref="dialogForm"
+            label-width="80px"
+        >
+            <!-- 原密码 -->
+            <el-form-item label="原密码" prop="password">
+                <el-input
+                    type="password"
+                    v-model="dialog.dataForm.password"
+                    placeholder="原密码"
+                    maxlength="20"
+                    clearable
+                />
+            </el-form-item>
+            <!-- 新密码 -->
+            <el-form-item label="新密码" prop="newPassword">
+                <el-input
+                    type="password"
+                    v-model="dialog.dataForm.newPassword"
+                    maxlength="20"
+                    clearable
+                    placeholder="新密码"
+                />
+            </el-form-item>
+            <!-- 确认密码 -->
+            <el-form-item label="确认密码" prop="confirmPassword">
+                <el-input
+                    type="password"
+                    v-model="dialog.dataForm.confirmPassword"
+                    maxlength="20"
+                    clearable
+                    placeholder="确认密码"
+                />
+            </el-form-item>
+        </el-form>
+        <!-- 取消、确定 -->
+        <template #footer>
+            <span class="dialog-footer">
+                <el-button @click="dialogVisible = false"> 取 消 </el-button>
+                <el-button type="primary" @click="dialogFormSubmit">
+                    确 定
+                </el-button>
+            </span>
+        </template>
+    </el-dialog>
 </template>
 
 <script setup lang="ts">
@@ -456,7 +458,7 @@ const user = reactive({
 });
 
 // 修改密码弹窗是否显示
-const dialogVisible = ref(true);
+const dialogVisible = ref(false);
 // 再次输入密码校验
 const validateConfirmPassword = (rule, value, callback) => {
     if (value != dialog.dataForm.newPassword) {
@@ -638,9 +640,51 @@ const logout = () => {
 };
 
 // 修改密码，显示密码修改弹框
-const updatePassword = () => {};
+const updatePassword = () => {
+    dialogVisible.value = true;
+    // 清空上一次的验证结果
+    proxy?.$nextTick(() => {
+        // (proxy.$refs["dialogForm"] as any).clearValidate(); // 清空上一次的校验
+        // 通过 ref 属性找到指向的组件，清空表单值
+        (proxy.$refs["dialogForm"] as any).resetFields();
+    });
+};
 
-const dialogFormSubmit = () => {};
+const dialogFormSubmit = () => {
+    // 验证Form表单中的控件内容
+    (proxy?.$refs["dialogForm"] as any).validate((valid: boolean) => {
+        // 验证失败
+        if (!valid) return;
+        // 验证通过，提交表单
+        const data = {
+            password: dialog.dataForm.password,
+            newPassword: dialog.dataForm.newPassword,
+        };
+        http("/mis/user/updatePassword", "post", data, true, (resp: any) => {
+            if (resp.rows == 0) {
+                (proxy as any)?.$message({
+                    message: "密码修改失败",
+                    type: "error",
+                    duration: 1200,
+                });
+                return;
+            }
+
+            // 密码修改成功
+            (proxy as any)?.$message({
+                message: "密码修改成功，请重新登录",
+                type: "success",
+                duration: 1200,
+                onClose: () => {
+                    // 关闭弹窗
+                    dialogVisible.value = false;
+                    // 退出登录
+                    logout();
+                },
+            });
+        });
+    });
+};
 </script>
 
 <style scoped lang="scss">

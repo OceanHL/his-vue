@@ -94,7 +94,6 @@ const qr = reactive({
 });
 
 const login = () => {
-    console.log(loginForm);
     // 验证用户名不正确【5-50位】
     if (!isUsername(loginForm.username)) {
         proxy.$message({
@@ -118,7 +117,7 @@ const login = () => {
     const data = toValue(loginForm);
 
     // 发送请求
-    $http("/mis/user/login", "post", data, true, (resp) => {
+    $http("/mis/user/login", "post", data, true, (resp: any) => {
         if (resp.result) {
             const permissions = resp.permissions;
             const token = resp.token;
