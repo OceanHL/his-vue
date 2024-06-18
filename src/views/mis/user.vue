@@ -79,15 +79,18 @@
             </el-form-item>
             <!-- 查询、新增、批量删除 -->
             <el-form-item>
+                <!-- 查询 -->
                 <el-button type="primary" @click="searchHandle()"
                     >查询</el-button
                 >
+                <!-- 新增 -->
                 <el-button
                     type="primary"
                     :disabled="!isAuth([ROOT, USER_INSERT])"
                     @click="addHandle()"
                     >新增</el-button
                 >
+                <!-- 删除 -->
                 <el-button
                     type="danger"
                     :disabled="!isAuth([ROOT, USER_DELETE])"
@@ -103,6 +106,7 @@
             border
             v-loading="tableData.loading"
             @selection-change="selectionChangeHandle"
+            style="margin-bottom: 20px"
         >
             <!-- 复选框 -->
             <el-table-column
@@ -121,8 +125,11 @@
             >
                 <template #default="scope">
                     <span>
-                        { (tableData.pageIndex - 1) * tableData.pageSize +
-                        scope.$index + 1 }
+                        {{
+                            (tableData.pageIndex - 1) * tableData.pageSize +
+                            scope.$index +
+                            1
+                        }}
                     </span>
                 </template>
             </el-table-column>
@@ -189,26 +196,28 @@
                 prop="status"
                 header-align="center"
                 align="center"
-                width="100"
+                width="109"
                 label="状态"
             />
             <!-- 操作 -->
             <el-table-column
                 header-align="center"
                 align="center"
-                width="150"
+                width="200"
                 label="操作"
             >
                 <template #default="scope">
                     <el-button
-                        type="text"
+                        link
+                        type="primary"
                         v-if="isAuth([ROOT, USER_UPDATE])"
                         @click="updateHandle(scope.row.id)"
                     >
                         修改
                     </el-button>
                     <el-button
-                        type="text"
+                        link
+                        :type="scope.row.root ? '' : 'primary'"
                         v-if="isAuth([ROOT, USER_UPDATE])"
                         :disabled="scope.row.status == '离职' || scope.row.root"
                         @click="dimissHandle(scope.row.id)"
@@ -216,7 +225,8 @@
                         离职
                     </el-button>
                     <el-button
-                        type="text"
+                        link
+                        type="danger"
                         v-if="isAuth([ROOT, USER_DELETE])"
                         :disabled="scope.row.root"
                         @click="deleteHandle(scope.row.id)"
@@ -391,6 +401,7 @@ import { dayjs } from "element-plus";
 // 全局实例
 const { proxy, appContext } = getCurrentInstance() as ComponentInternalInstance;
 const isAuth = appContext.config.globalProperties.$isAuth;
+const http = appContext.config.globalProperties.$http;
 
 // 权限
 const { ROOT, USER_INSERT, USER_DELETE, USER_UPDATE } = PERMISSION;
@@ -419,13 +430,13 @@ const sexList = [
     },
 ];
 
-// 表单值
+// 查询表单条件值
 const dataForm = reactive({
-    name: "",
-    sex: "",
-    role: "",
-    deptId: "",
-    status: "",
+    name: null,
+    sex: null,
+    role: null,
+    deptId: null,
+    status: null,
     roleList: [],
     deptList: [],
 });
@@ -556,8 +567,38 @@ const dialogData = reactive({
     },
 });
 
+// 在组件挂载完成后执行
+onMounted(() => {
+    // 加载角色列表
+    loadRoleList();
+    // 加载部门列表
+    loadDeptList();
+    // 加载table分页记录
+    loadTableDataList();
+});
+
 // 查询
-const searchHandle = () => {};
+const searchHandle = () => {
+    // 校验表单内输入的所有查询条件
+    (proxy?.$refs["form"] as any).validate((valid: boolean) => {
+        if (!valid) return false;
+
+        // 校验成功
+        // 清理验证结果
+        (proxy?.$refs["form"] as any).clearValidate();
+        // 将空字符串替换成 null 值
+        if (dataForm.name == "") dataForm.name = null;
+        if (dataForm.sex == "") dataForm.sex = null;
+        if (dataForm.role == "") dataForm.role = null;
+        if (dataForm.deptId == "") dataForm.deptId = null;
+        if (dataForm.status == "") dataForm.status = null;
+
+        // 默认显示第一页数据
+        if (tableData.pageIndex !== 1) tableData.pageIndex = 1;
+        // 加载table分页记录
+        loadTableDataList();
+    });
+};
 
 // 添加
 const addHandle = () => {};
@@ -575,13 +616,63 @@ const updateHandle = () => {};
 const dimissHandle = () => {};
 
 // 每页展示数量改变
-const sizeChangeHandle = () => {};
+const sizeChangeHandle = (pageSize: number) => {
+    console.log("每页条数: " + pageSize);
+    tableData.pageSize = pageSize; // 显示的条数
+    tableData.pageIndex = 1; // 当前页码
+    // 加载table分页记录
+    loadTableDataList();
+};
 
-// 当前页改变
-const currentChangeHandle = () => {};
+// 当前页码改变
+const currentChangeHandle = (pageIndex: number) => {
+    console.log("当前页码: " + pageIndex);
+    tableData.pageIndex = pageIndex; // 当前页码
+    // 加载table分页记录
+    loadTableDataList();
+};
 
 // 弹窗-数据提交
 const dataFormSubmit = () => {};
+
+// 加载角色列表
+const loadRoleList = () => {
+    http("/mis/role/searchAllRole", "get", null, true, (resp: any) => {
+        dataForm.roleList = resp.list;
+    });
+};
+
+// 加载部门列表
+const loadDeptList = () => {
+    http("/mis/dept/searchAllDept", "get", null, true, (resp: any) => {
+        dataForm.deptList = resp.list;
+    });
+};
+
+// 加载table分页记录
+const loadTableDataList = () => {
+    tableData.loading = true;
+    const json = {
+        page: tableData.pageIndex, // 当前页码
+        length: tableData.pageSize, // 每页展示多少数据
+        name: dataForm.name, // 姓名
+        sex: dataForm.sex, // 性别
+        role: dataForm.role, // 角色
+        deptId: dataForm.deptId, // 部门
+        status: dataForm.status, // 状态
+    };
+    http("/mis/user/searchByPage", "post", json, true, (resp: any) => {
+        const page = resp.page; // 分页数据
+        const list = page.list;
+        for (const item of list) {
+            if (item.status == 1) item.status = "在职";
+            else if (item.status == 2) item.status = "离职";
+        }
+        tableData.dataList = list;
+        tableData.totalCount = page.totalCount;
+        tableData.loading = false;
+    });
+};
 </script>
 
 <style lang="scss" scoped>
