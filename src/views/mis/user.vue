@@ -1,6 +1,6 @@
 <template>
     <!-- 表单、表格 -->
-    <div>
+    <div v-if="isAuth([ROOT, USER_SELECT])">
         <!-- 查询表单 -->
         <el-form :inline="true" :model="dataForm" :rules="dataRule" ref="form">
             <!-- 姓名 -->
@@ -250,6 +250,7 @@
     <!-- 弹窗 -->
     <el-dialog
         :title="!dialogData.dataForm.id ? '新增' : '修改'"
+        v-if="isAuth([ROOT, USER_INSERT, USER_UPDATE])"
         :close-on-click-modal="false"
         v-model="dialogVisible"
         width="450px"
@@ -339,6 +340,7 @@
                     multiple
                     clearable
                 >
+                    <!-- 无法选择【超级管理员】选项 -->
                     <el-option
                         v-for="item in dialogData.roleList"
                         :key="item.id"
@@ -404,7 +406,7 @@ const isAuth = appContext.config.globalProperties.$isAuth;
 const http = appContext.config.globalProperties.$http;
 
 // 权限
-const { ROOT, USER_INSERT, USER_DELETE, USER_UPDATE } = PERMISSION;
+const { ROOT, USER_INSERT, USER_DELETE, USER_UPDATE, USER_SELECT } = PERMISSION;
 
 // 在职状态
 const employmentStatus = [
