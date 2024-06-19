@@ -342,7 +342,7 @@
                 >
                     <!-- 无法选择【超级管理员】选项 -->
                     <el-option
-                        v-for="item in dialogData.roleList"
+                        v-for="item in dataForm.roleList"
                         :key="item.id"
                         :label="item.roleName"
                         :value="item.id"
@@ -359,7 +359,7 @@
                     clearable
                 >
                     <el-option
-                        v-for="item in dialogData.deptList"
+                        v-for="item in dataForm.deptList"
                         :key="item.id"
                         :label="item.deptName"
                         :value="item.id"
@@ -372,6 +372,7 @@
                     v-model="dialogData.dataForm.status"
                     placeholder="状态"
                     clearable
+                    disabled
                 >
                     <el-option
                         v-for="item in employmentStatus"
@@ -385,7 +386,7 @@
         <!-- 取消、确定 -->
         <template #footer>
             <span class="dialog-footer">
-                <el-button @click="dialogData.visible = false">取消</el-button>
+                <el-button @click="dialogVisible = false">取消</el-button>
                 <el-button type="primary" @click="dataFormSubmit">
                     确定
                 </el-button>
@@ -467,11 +468,11 @@ const tableData = reactive({
 });
 
 // 弹窗显示，调试完静态页面后，需修改为false【ElementPlus最新版本只能用 ref 当作弹框显示属性】
-const dialogVisible = ref(true);
+const dialogVisible = ref(false);
 // 弹窗数据
 const dialogData = reactive({
-    visible: true, // 弹窗显示，调试完静态页面后，需修改为false
     update: false, // 是否为修改
+    // 表单数据
     dataForm: {
         id: null,
         username: null,
@@ -480,11 +481,12 @@ const dialogData = reactive({
         sex: null,
         tel: null,
         email: null,
-        hiredate: dayjs(new Date()).format("YYYY-MM-DD"),
+        hiredate: dayjs(new Date()).format("YYYY-MM-DD"), //
         role: null,
         deptId: null,
         status: 1, // 在职状态：1-在职、2-离职
     },
+    // 表单校验规则
     dataRule: {
         username: [
             {
@@ -555,10 +557,10 @@ const dialogData = reactive({
             },
         ],
         deptId: [
-            {
-                required: true,
-                message: "部门不能为空",
-            },
+            // {
+            //     required: true,
+            //     message: "部门不能为空",
+            // },
         ],
         status: [
             {
@@ -602,8 +604,16 @@ const searchHandle = () => {
     });
 };
 
-// 添加
-const addHandle = () => {};
+// 新增用户
+const addHandle = () => {
+    dialogData.dataForm.id = null; // 新增不需要主键id，由数据库自动生成
+    dialogData.update = false; // 新增
+    dialogVisible.value = true; // 显示弹窗
+    // 每次显示后都需要清空上次填写的表单数据
+    proxy?.$nextTick(() => {
+        (proxy?.$refs["dialogForm"] as any).resetFields();
+    });
+};
 
 // 批量删除
 const deleteHandle = () => {};
@@ -635,7 +645,58 @@ const currentChangeHandle = (pageIndex: number) => {
 };
 
 // 弹窗-数据提交
-const dataFormSubmit = () => {};
+const dataFormSubmit = () => {
+    (proxy?.$refs["dialogForm"] as any).validate((valid: boolean) => {
+        if (!valid) return false;
+
+        // 校验成功
+        // 清理验证结果
+        (proxy?.$refs["dialogForm"] as any).clearValidate();
+
+        // 校验成功后，提交数据
+        const json = {
+            userId: dialogData.dataForm.id,
+            username: dialogData.dataForm.username,
+            password: dialogData.dataForm.password,
+            name: dialogData.dataForm.name,
+            sex: dialogData.dataForm.sex,
+            tel: dialogData.dataForm.tel,
+            email: dialogData.dataForm.email,
+            // 把【日期对象】转换成【日期字符串】
+            hiredate: dayjs(dialogData.dataForm.hiredate).format("YYYY-MM-DD"),
+            role: dialogData.dataForm.role,
+            deptId: dialogData.dataForm.deptId,
+            status: dialogData.dataForm.status,
+        };
+        // console.log(json);
+        // 新增 或 更新 的路径
+        // const url = `/mis/user/${dialogData.update ? "update" : "insert"}`;
+        const url = `/mis/user/${dialogData.dataForm.id == null ? "insert" : "update"}`;
+        http(url, "post", json, true, (resp: any) => {
+            if (resp.rows !== 1) {
+                (proxy as any)?.$message({
+                    message: "操作失败",
+                    type: "error",
+                    duration: 1200,
+                });
+                return;
+            }
+
+            //【resp.rows == 1】新增、更新成功
+            (proxy as any)?.$message({
+                message: "操作成功",
+                type: "success",
+                duration: 1200,
+                onClose: () => {
+                    // 关闭弹窗
+                    dialogVisible.value = false;
+                    // 重新加载table分页记录
+                    loadTableDataList();
+                },
+            });
+        });
+    });
+};
 
 // 加载角色列表
 const loadRoleList = () => {
