@@ -208,6 +208,7 @@
                 label="操作"
             >
                 <template #default="scope">
+                    <!-- 修改 -->
                     <el-button
                         link
                         type="primary"
@@ -216,18 +217,24 @@
                     >
                         修改
                     </el-button>
+                    <!-- 离职 -->
                     <el-button
                         link
-                        :type="scope.row.root ? '' : 'primary'"
+                        :type="
+                            scope.row.root || scope.row.status == '离职'
+                                ? ''
+                                : 'primary'
+                        "
                         v-if="isAuth([ROOT, USER_UPDATE])"
                         :disabled="scope.row.status == '离职' || scope.row.root"
                         @click="dimissHandle(scope.row.id)"
                     >
                         离职
                     </el-button>
+                    <!-- 删除 -->
                     <el-button
                         link
-                        type="danger"
+                        :type="scope.row.root ? '' : 'danger'"
                         v-if="isAuth([ROOT, USER_DELETE])"
                         :disabled="scope.row.root"
                         @click="deleteHandle(scope.row.id)"
@@ -397,6 +404,7 @@
 </template>
 
 <script setup lang="ts">
+import type { Row } from "./types/userType";
 import { reactive } from "vue";
 import type { ComponentInternalInstance } from "vue";
 import { PERMISSION } from "@/utils/isAuth";
@@ -617,10 +625,64 @@ const addHandle = () => {
 };
 
 // 批量删除
-const deleteHandle = () => {};
+const deleteHandle = (id: number) => {
+    /**
+     * id 存在则为点击了【删除】按钮，否则为点击了【批量删除】按钮
+     */
+    const ids = id
+        ? [id]
+        : (tableData.selections as any).map((row: Row) => row.id);
+    if (ids.length === 0) {
+        proxy?.$message({
+            message: "没有选中记录",
+            type: "warning",
+            duration: 1200,
+        });
+        return;
+    }
 
-// 勾选
-const selectionChangeHandle = () => {};
+    proxy
+        ?.$confirm("确定删除选中的用户?", "提示", {
+            confirmButtonText: "确定",
+            cancelButtonText: "取消",
+            type: "warning",
+        })
+        .then(() => {
+            http(
+                "/mis/user/deleteByIds",
+                "post",
+                { ids: ids },
+                true,
+                (resp) => {
+                    if (resp.rows > 0) {
+                        proxy.$message({
+                            message: "删除成功",
+                            type: "success",
+                            duration: 1200,
+                            onClose: () => {
+                                // 删除成功后，重新加载table分页记录
+                                loadTableDataList();
+                            },
+                        });
+                    } else {
+                        proxy.$message({
+                            message: "不能删除记录",
+                            type: "warning",
+                            duration: 1200,
+                        });
+                    }
+                }
+            );
+        });
+};
+
+/**
+ *  勾选
+ * @param rows 所有选中的行数据
+ */
+const selectionChangeHandle = (rows: Row[]) => {
+    (tableData.selections as any) = rows;
+};
 
 // 修改
 const updateHandle = (id: number) => {
@@ -755,6 +817,18 @@ const loadTableDataList = () => {
         tableData.totalCount = page.totalCount;
         tableData.loading = false;
     });
+};
+
+/**
+ * 复选框是否可选
+ * @param row 当前行的完整数据
+ * @param index 当前行索引
+ * @returns {boolean} 是否可选
+ */
+const selectable = (row: any, index: number): boolean => {
+    const temp = row.roles.split("、");
+    if (temp.includes("超级管理员")) return false;
+    return true;
 };
 </script>
 
