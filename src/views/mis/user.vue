@@ -114,6 +114,7 @@
                 header-align="center"
                 align="center"
                 width="50"
+                :selectable="selectable"
             />
             <!-- 序号 -->
             <el-table-column
