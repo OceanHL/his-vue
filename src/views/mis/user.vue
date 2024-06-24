@@ -622,7 +622,26 @@ const deleteHandle = () => {};
 const selectionChangeHandle = () => {};
 
 // 修改
-const updateHandle = () => {};
+const updateHandle = (id: number) => {
+    dialogVisible.value = true; // 显示弹窗
+    (dialogData.dataForm.id as unknown as number) = id; // 记录用户主键id
+    dialogData.update = true; // 修改操作
+    const json = {
+        userId: id,
+    };
+    http("/mis/user/searchById", "post", json, true, (resp: any) => {
+        const result = resp.result;
+        dialogData.dataForm.id = result.id;
+        dialogData.dataForm.username = result.username;
+        dialogData.dataForm.name = result.name;
+        dialogData.dataForm.sex = result.sex;
+        dialogData.dataForm.tel = result.tel;
+        dialogData.dataForm.email = result.email;
+        dialogData.dataForm.hiredate = result.hiredate;
+        dialogData.dataForm.role = JSON.parse(result.role);
+        dialogData.dataForm.deptId = result.deptId;
+    });
+};
 
 // 离职
 const dimissHandle = () => {};
