@@ -707,7 +707,36 @@ const updateHandle = (id: number) => {
 };
 
 // 离职
-const dimissHandle = () => {};
+const dimissHandle = (id: number) => {
+    proxy
+        .$confirm("确定设置该用户为离职状态?", "提示", {
+            confirmButtonText: "确定",
+            cancelButtonText: "取消",
+            type: "warning",
+        })
+        .then(() => {
+            const json = { userId: id };
+            http("/mis/user/dismissById", "post", json, true, (resp) => {
+                if (resp.rows !== 1) {
+                    proxy.$message({
+                        message: "操作失败",
+                        type: "warning",
+                        duration: 1200,
+                    });
+                    return;
+                }
+                proxy.$message({
+                    message: "操作成功",
+                    type: "success",
+                    duration: 1200,
+                    onClose: () => {
+                        // 设置成功后，重新加载table分页记录
+                        loadTableDataList();
+                    },
+                });
+            });
+        });
+};
 
 // 每页展示数量改变
 const sizeChangeHandle = (pageSize: number) => {
