@@ -404,19 +404,20 @@
 </template>
 
 <script setup lang="ts">
+import type { ComponentInternalInstanceI } from "./types/globalType";
 import type { Row } from "./types/userType";
-import { reactive } from "vue";
-import type { ComponentInternalInstance } from "vue";
-import { PERMISSION } from "@/utils/isAuth";
+import { PermissionEnum } from "@/utils/isAuth";
 import { dayjs } from "element-plus";
 
 // 全局实例
-const { proxy, appContext } = getCurrentInstance() as ComponentInternalInstance;
+const { proxy, appContext } =
+    getCurrentInstance() as ComponentInternalInstanceI;
 const isAuth = appContext.config.globalProperties.$isAuth;
 const http = appContext.config.globalProperties.$http;
 
 // 权限
-const { ROOT, USER_INSERT, USER_DELETE, USER_UPDATE, USER_SELECT } = PERMISSION;
+const { ROOT, USER_INSERT, USER_DELETE, USER_UPDATE, USER_SELECT } =
+    PermissionEnum;
 
 // 在职状态
 const employmentStatus = [

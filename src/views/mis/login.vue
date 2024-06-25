@@ -63,6 +63,7 @@
 </template>
 
 <script setup lang="ts">
+import type { ComponentInternalInstanceI } from "./types/globalType";
 // 当用户登录成功后，需要使用路由对象跳转页面
 import { useRouter } from "vue-router";
 import { isUsername, isPassword } from "../../utils/validate";
@@ -77,7 +78,7 @@ const {
             globalProperties: { $http },
         },
     },
-} = getCurrentInstance();
+} = getCurrentInstance() as ComponentInternalInstanceI;
 
 const loginForm = reactive({
     username: "admin",
@@ -138,5 +139,5 @@ const login = () => {
 </script>
 
 <style lang="less" scoped>
-@import url(login.less);
+@import url(./styles/login.less);
 </style>

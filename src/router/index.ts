@@ -5,24 +5,24 @@ const routes: Array<RouteRecordRaw> = [
     {
         path: "/front",
         name: "Front",
-        component: () => import("@/views/front/main.vue"),
+        component: () => import("../views/front/main.vue"),
         children: [
             {
                 path: "index", // 开头不能加斜线
                 name: "FrontIndex",
-                component: () => import("@/views/front/index.vue"),
+                component: () => import("../views/front/index.vue"),
             },
         ],
     },
     {
         path: "/mis",
         name: "Main",
-        component: () => import("@/views/mis/main.vue"),
+        component: () => import("../views/mis/main.vue"),
         children: [
             {
                 path: "home",
                 name: "MisHome",
-                component: () => import("@/views/mis/home.vue"),
+                component: () => import("../views/mis/home.vue"),
                 meta: {
                     title: "首页",
                 },
@@ -30,7 +30,7 @@ const routes: Array<RouteRecordRaw> = [
             {
                 path: "dept",
                 name: "MisDept",
-                component: () => import("@/views/mis/dept.vue"),
+                component: () => import("../views/mis/dept.vue"),
                 meta: {
                     title: "部门管理",
                     isTab: true,
@@ -39,7 +39,7 @@ const routes: Array<RouteRecordRaw> = [
             {
                 path: "role",
                 name: "MisRole",
-                component: () => import("@/views/mis/role.vue"),
+                component: () => import("../views/mis/role.vue"),
                 meta: {
                     title: "角色管理",
                     isTab: true,
@@ -48,9 +48,19 @@ const routes: Array<RouteRecordRaw> = [
             {
                 path: "user",
                 name: "MisUser",
-                component: () => import("@/views/mis/user.vue"),
+                component: () => import("../views/mis/user.vue"),
                 meta: {
                     title: "用户管理",
+                    isTab: true,
+                },
+            },
+            // 体检套餐
+            {
+                path: "goods",
+                name: "MisGoods",
+                component: () => import("../views/mis/goods.vue"),
+                meta: {
+                    title: "体检套餐",
                     isTab: true,
                 },
             },

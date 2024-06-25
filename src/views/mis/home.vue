@@ -30,5 +30,5 @@
 <script></script>
 
 <style lang="less" scoped>
-@import url("home.less");
+@import url("./styles/home.less");
 </style>
