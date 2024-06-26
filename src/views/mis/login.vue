@@ -139,5 +139,5 @@ const login = () => {
 </script>
 
 <style lang="less" scoped>
-@import url(./styles/login.less);
+@import url(./login.less);
 </style>
