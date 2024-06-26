@@ -93,6 +93,187 @@
                 </el-radio-group>
             </el-form-item>
         </el-form>
+        <!-- 表格 -->
+        <el-table
+            :data="tableData.dataList"
+            :header-cell-style="{ background: '#f5f7fa' }"
+            border
+            v-loading="tableData.loading"
+            @selection-change="selectionChangeHandle"
+        >
+            <!-- 复选框 -->
+            <el-table-column
+                type="selection"
+                header-align="center"
+                align="center"
+                width="50"
+                :selectable="selectable"
+            />
+            <!-- 序号 -->
+            <el-table-column
+                type="index"
+                header-align="center"
+                align="center"
+                width="100"
+                label="序号"
+            >
+                <template #default="scope">
+                    <span>{{
+                        (tableData.pageIndex - 1) * tableData.pageSize +
+                        scope.$index +
+                        1
+                    }}</span>
+                </template>
+            </el-table-column>
+            <!-- 套餐名称 -->
+            <el-table-column
+                prop="title"
+                header-align="left"
+                align="left"
+                min-width="250"
+                label="套餐名称"
+            />
+            <!-- 套餐编号 -->
+            <el-table-column
+                prop="code"
+                header-align="left"
+                align="left"
+                min-width="130"
+                label="套餐编号"
+            />
+            <!-- 现价 -->
+            <el-table-column
+                header-align="center"
+                align="center"
+                min-width="80"
+                label="现价"
+            >
+                <template #default="scope">
+                    <span>{{ scope.row.currentPrice }}</span>
+                </template>
+            </el-table-column>
+            <!-- 原价 -->
+            <el-table-column
+                header-align="center"
+                align="center"
+                min-width="100"
+                label="原价"
+            >
+                <template #default="scope">
+                    <span>{{ scope.row.initialPrice }}</span>
+                </template>
+            </el-table-column>
+            <!-- 促销方案 -->
+            <el-table-column
+                prop="ruleName"
+                header-align="center"
+                align="center"
+                min-width="100"
+                label="促销方案"
+            />
+            <!-- 销量 -->
+            <el-table-column
+                prop="salesVolume"
+                header-align="center"
+                align="center"
+                min-width="100"
+                label="销量"
+            />
+            <!-- 类型 -->
+            <el-table-column
+                prop="type"
+                header-align="center"
+                align="center"
+                min-width="100"
+                label="类型"
+            />
+            <!-- 体检内容 -->
+            <el-table-column
+                prop="center"
+                header-align="center"
+                align="center"
+                min-width="100"
+                label="体检内容"
+            >
+                <template #default="scope">
+                    <span
+                        :class="scope.row.hasCheckup ? 'link-blue' : 'link-red'"
+                        @click="
+                            documentHandle(scope.row.id, scope.row.hasCheckup)
+                        "
+                    >
+                        {{ scope.row.hasCheckup ? "右文档" : "无文档" }}
+                    </span>
+                </template>
+            </el-table-column>
+            <!-- 状态 -->
+            <el-table-column
+                prop="status"
+                header-align="center"
+                align="center"
+                min-width="80"
+                label="状态"
+            >
+                <template #default="scope">
+                    <el-switch
+                        v-model="scope.row.status"
+                        inline-prompt
+                        style="
+                            --el-switch-on-color: #13ce66;
+                            --el-switch-off-color: #ff4949;
+                        "
+                        active-text="上架"
+                        inactive-text="下架"
+                        :disabled="!scope.row.hasCheckup"
+                        @change="
+                            changeSwitchHandle(scope.row.id, scope.row.status)
+                        "
+                    />
+                </template>
+            </el-table-column>
+            <!-- 操作 -->
+            <el-table-column
+                header-align="center"
+                align="center"
+                width="150"
+                label="操作"
+            >
+                <template #default="scope">
+                    <!-- 预览 -->
+                    <el-button link @click="viewHandle(scope.row.id)"
+                        >预览</el-button
+                    >
+                    <!-- 修改 -->
+                    <el-button
+                        link
+                        v-if="isAuth([ROOT, GOODS_UPDATE])"
+                        :disabled="scope.row.status"
+                        @click="updateHandle(scope.row.id)"
+                        >修改</el-button
+                    >
+                    <!-- 删除 -->
+                    <el-button
+                        link
+                        v-if="isAuth([ROOT, GOODS_DELETE])"
+                        :disabled="
+                            scope.row.salesVolume > 0 || scope.row.status
+                        "
+                        @click="deleteHandle(scope.row.id)"
+                        >删除</el-button
+                    >
+                </template>
+            </el-table-column>
+        </el-table>
+        <!-- 分页 -->
+        <el-pagination
+            @size-change="sizeChangeHandle"
+            @current-change="currentChangeHandle"
+            :currentPage="tableData.pageIndex"
+            :page-sizes="[10, 20, 50]"
+            :page-size="tableData.pageSize"
+            :total="tableData.totalCount"
+            layout="total, sizes, prev, pager, next, jumper"
+        />
     </div>
 </template>
 
@@ -117,6 +298,34 @@ type SearchDataFormType = {
     status: string | null;
 };
 
+// 表格数据类型
+type TableDataType = {
+    /**
+     * 表格数据
+     */
+    dataList: any[];
+    /**
+     * 表格数据加载状态
+     */
+    loading: boolean;
+    /**
+     * 当前页码
+     */
+    pageIndex: number;
+    /**
+     * 每页显示条数
+     */
+    pageSize: number;
+    /**
+     * 每页可展示数量的列表
+     */
+    pageSizes: number[];
+    /**
+     * 总条数
+     */
+    totalCount: number;
+};
+
 const { proxy, appContext } =
     getCurrentInstance() as ComponentInternalInstanceI;
 
@@ -124,7 +333,8 @@ const isAuth = appContext.config.globalProperties.$isAuth as IsAuthFn;
 const http = appContext.config.globalProperties.$http as HttpFn;
 
 // 权限
-const { ROOT, GOODS_SELECT, GOODS_DELETE, GOODS_INSERT } = PermissionEnum;
+const { ROOT, GOODS_SELECT, GOODS_DELETE, GOODS_INSERT, GOODS_UPDATE } =
+    PermissionEnum;
 
 // 搜索表单数据
 const searchDataForm = reactive<SearchDataFormType>({
@@ -149,6 +359,45 @@ const searchDataFormRule = reactive({
         { pattern: "^[a-zA-Z0-9]{6,20}$", message: "编号格式不正确" },
     ],
 });
+
+// 表格所有数据
+const tableData = reactive<TableDataType>({
+    dataList: [],
+    loading: false,
+    pageIndex: 1,
+    pageSize: 10,
+    pageSizes: [10, 20, 50],
+    totalCount: 0,
+});
+
+// 查询【全部、已上架、已下架】
+function searchHandle() {}
+
+// 新增
+function addHandle() {}
+
+// 批量删除
+function deleteHandle() {}
+
+// 选中的所有行
+function selectionChangeHandle() {}
+
+// 当前复选框是否可行
+function selectable() {
+    return true;
+}
+
+// 体检内容-文档
+function documentHandle(id: number, hasCheckup: boolean) {}
+
+// 状态切换 - 上架、下架
+function changeSwitchHandle(id: number, status: boolean) {}
+
+// 页面展示条数变化
+function sizeChangeHandle(size: number) {}
+
+// 当前页码变化
+function currentChangeHandle(page: number) {}
 </script>
 
 <style lang="less" scoped>
