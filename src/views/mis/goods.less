@@ -1,4 +1,6 @@
 @import url(../style.less);
+
+/** ================搜索区================= **/
 .mold {
     float: right;
     // el-form-item自带右外填充，所以我们要把外填充去掉
@@ -25,6 +27,7 @@
     }
 }
 
+/** ================新增-修改弹窗================= **/
 .image-uploader {
     width: 90px;
     height: 90px;
@@ -72,4 +75,27 @@
 .item-row {
     width: 100%;
     margin-bottom: 18px;
+}
+
+/** ================上传、下载弹窗================= **/
+.message-content {
+    display: flex;
+    .icon {
+        color: @bgc-17;
+        margin-top: 3px;
+    }
+    p {
+        margin: 0 10px 5px 10px;
+        line-height: 1.7;
+    }
+}
+
+.document-dialog-footer {
+    display: flex;
+    justify-content: right;
+    .uploadBtn {
+        margin-right: 10px;
+    }
+    .downloadBtn {
+    }
 }

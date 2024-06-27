@@ -479,6 +479,48 @@
             </span>
         </template>
     </el-dialog>
+    <!-- 上传、下载弹窗 -->
+    <el-dialog
+        title="提示信息"
+        v-if="isAuth([ROOT, GOODS_INSERT, GOODS_UPDATE])"
+        v-model="documentDialogVisible"
+        width="350px"
+    >
+        <div class="message-content">
+            <el-icon :size="18" class="icon">
+                <WarningFilled />
+            </el-icon>
+            <p>
+                请您选择【上传】或者【下载】体检内容文档？如果未上传体检内容文档，则体检套餐将无法上架。
+            </p>
+        </div>
+        <template #footer>
+            <div class="document-dialog-footer">
+                <el-upload
+                    :action="documentDialog.upload.action"
+                    :data="documentDialog.data"
+                    :show-file-list="false"
+                    :headers="documentDialog.upload.headers"
+                    accept=".xlsx"
+                    :before-upload="documentBeforeUpload"
+                    :on-success="documentUploadSuccess"
+                    :on-error="documentUploadError"
+                >
+                    <el-button type="success" :icon="Upload" class="uploadBtn"
+                        >上传</el-button
+                    >
+                </el-upload>
+                <el-button
+                    type="primary"
+                    :icon="Download"
+                    class="downloadBtn"
+                    :disabled="!documentDialog.data.hasCheckup"
+                    @click="documentDownloadHandle"
+                    >下载</el-button
+                >
+            </div>
+        </template>
+    </el-dialog>
 </template>
 
 <script setup lang="ts">
@@ -570,6 +612,21 @@ type GoodsDialogType = {
      * 表单校验规则
      */
     dataRule: Object;
+};
+
+// 【上传、下载弹窗】数据类型
+type DocumentDialogType = {
+    upload: {
+        action: string;
+        headers: {
+            token: string | null;
+        };
+    };
+    data: {
+        id: number | null;
+        // 是否拥有检查报告
+        hasCheckup: boolean;
+    };
 };
 
 const { proxy, appContext } =
@@ -701,6 +758,22 @@ const goodsDialog = reactive<GoodsDialogType>({
                 message: "没有选择套餐类别",
             },
         ],
+    },
+});
+
+// 【上传、下载弹窗】是否显示
+const documentDialogVisible = ref(true);
+// 【上传、下载弹窗】数据
+const documentDialog = reactive<DocumentDialogType>({
+    upload: {
+        action: `${baseUrl}/mis/goods/uploadCheckupExcel`,
+        headers: {
+            token: localStorage.getItem("token"),
+        },
+    },
+    data: {
+        id: null,
+        hasCheckup: false,
     },
 });
 
