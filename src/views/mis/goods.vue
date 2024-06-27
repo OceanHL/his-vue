@@ -275,6 +275,210 @@
             layout="total, sizes, prev, pager, next, jumper"
         />
     </div>
+    <!-- 新增弹窗 -->
+    <el-dialog
+        :title="!goodsDialog.dataForm.id ? '新增' : '修改'"
+        v-if="isAuth([ROOT, GOODS_INSERT, GOODS_UPDATE])"
+        :close-on-click-modal="false"
+        v-model="goodsDialogVisible"
+        width="750px"
+    >
+        <el-form
+            :model="goodsDialog.dataForm"
+            :rules="goodsDialog.dataRule"
+            ref="dialogForm"
+            label-width="80px"
+        >
+            <!-- 套餐名称 -->
+            <el-form-item label="套餐名称" prop="title">
+                <el-input
+                    v-model="goodsDialog.dataForm.title"
+                    maxlength="50"
+                    clearable
+                />
+            </el-form-item>
+            <!-- 套餐编码 -->
+            <el-form-item label="套餐编码" prop="code">
+                <el-input
+                    v-model="goodsDialog.dataForm.code"
+                    maxlength="20"
+                    clearable
+                />
+            </el-form-item>
+            <!-- 简介信息 -->
+            <el-form-item label="简介信息" prop="description">
+                <el-input
+                    type="textarea"
+                    v-model="goodsDialog.dataForm.description"
+                    :rows="4"
+                    maxlength="200"
+                    clearable
+                />
+            </el-form-item>
+            <!-- 套餐原价 -->
+            <el-form-item label="套餐原价" prop="initialPrice">
+                <el-input-number
+                    v-model="goodsDialog.dataForm.initialPrice"
+                    placeholder="输入原价"
+                    class="price"
+                    maxlength="20"
+                    clearable
+                >
+                    <template #append>元</template>
+                </el-input-number>
+                <span class="desc">提示：价格精确到分（小数点后两位</span>
+            </el-form-item>
+            <!-- 折扣列表 -->
+            <el-form-item label="折扣列表">
+                <el-select
+                    v-model="goodsDialog.dataForm.ruleId"
+                    placeholder="选择折扣信息"
+                    clearable
+                >
+                    <el-option
+                        v-for="item in goodsDialog.ruleList"
+                        :key="item.id"
+                        :label="item.name"
+                        :value="item.id"
+                    />
+                </el-select>
+            </el-form-item>
+            <!-- 封面图片 -->
+            <el-form-item label="封面图片" prop="image">
+                <el-upload
+                    class="image-uploader"
+                    :action="goodsDialog.upload.action"
+                    :headers="goodsDialog.upload.headers"
+                    :data="goodsDialog.upload.data"
+                    :show-file-list="false"
+                    accept=".jpg,.jpeg"
+                    :on-success="imageUploadSuccess"
+                    :before-upload="imageBeforeUpload"
+                    :on-error="imageUploadError"
+                >
+                    <img
+                        v-if="goodsDialog.imageUrl"
+                        :src="goodsDialog.imageUrl"
+                        class="image"
+                    />
+                    <el-icon v-else class="image-uploader-icon">
+                        <Plus />
+                    </el-icon>
+                </el-upload>
+            </el-form-item>
+            <!-- 套餐类别 -->
+            <el-form-item label="套餐类别" prop="type">
+                <el-select
+                    v-model="goodsDialog.dataForm.type"
+                    placeholder="检查类别"
+                    clearable
+                >
+                    <el-option label="父母体检" value="父母体检" />
+                    <el-option label="入职体检" value="入职体检" />
+                    <el-option label="职场白领" value="职场白领" />
+                    <el-option label="个人高端" value="个人高端" />
+                    <el-option label="中青年体检" value="中青年体检" />
+                </el-select>
+            </el-form-item>
+            <!-- 特征标签 -->
+            <el-form-item label="特征标签">
+                <div class="tag-row">
+                    <el-input
+                        class="tag-input"
+                        v-model="goodsDialog.newTag"
+                        @keyup.enter="enterTag"
+                        clearable
+                    />
+                    <span class="desc">提示, 输入标签后按回车键</span>
+                </div>
+                <div class="tags">
+                    <el-tag
+                        v-for="item in goodsDialog.dataForm.tags"
+                        :key="item"
+                        closable
+                        :disable-transitions="false"
+                        @close="closeTag(item)"
+                    >
+                        {{ item }}
+                    </el-tag>
+                </div>
+            </el-form-item>
+            <!-- 展示区 -->
+            <el-form-item label="展示区" prop="partId">
+                <el-select
+                    v-model="goodsDialog.dataForm.partId"
+                    placeholder="选择展示区"
+                    clearable="clearable"
+                >
+                    <el-option label="活动专区" value="1" />
+                    <el-option label="热卖套餐" value="2" />
+                    <el-option label="新品推荐" value="3" />
+                    <el-option label="孝敬父母" value="4" />
+                    <el-option label="白领精英" value="5" />
+                </el-select>
+            </el-form-item>
+            <!-- 体检内容 -->
+            <el-form-item label="体检内容">
+                <el-row
+                    :gutter="10"
+                    class="item-row"
+                    v-for="(item, $index) in goodsDialog.item"
+                    :key="$index"
+                >
+                    {{ $index }}
+                    <!-- 检查类别 -->
+                    <el-col :span="6">
+                        <el-select
+                            v-model="item.type"
+                            placeholder="检查类别"
+                            clearable
+                        >
+                            <el-option label="科室检查" value="科室检查" />
+                            <el-option label="实验室检查" value="实验室检查" />
+                            <el-option label="医技检查" value="医技检查" />
+                            <el-option label="其他检查" value="其他检查" />
+                        </el-select>
+                    </el-col>
+                    <!-- 体检项目 -->
+                    <el-col :span="6">
+                        <el-input
+                            v-model="item.title"
+                            placeholder="体检项目"
+                            maxlength="50"
+                            clearable
+                        />
+                    </el-col>
+                    <!-- 体检内容 -->
+                    <el-col :span="11">
+                        <el-input
+                            v-model="item.content"
+                            placeholder="体检内容"
+                            maxlength="500"
+                            clearable
+                        />
+                    </el-col>
+                    <!-- 删除 -->
+                    <el-col :span="1">
+                        <el-button
+                            type="primary"
+                            :icon="Delete"
+                            @click="deleteItem($index)"
+                        />
+                    </el-col>
+                </el-row>
+            </el-form-item>
+        </el-form>
+        <!-- 添加项目、取消、确定 -->
+        <template #footer>
+            <span class="dialog-footer">
+                <el-button type="danger" @click="addItem">添加项目</el-button>
+                <el-button @click="goodsDialogVisible = false">取消</el-button>
+                <el-button type="primary" @click="dataFormSubmit"
+                    >确定</el-button
+                >
+            </span>
+        </template>
+    </el-dialog>
 </template>
 
 <script setup lang="ts">
@@ -324,6 +528,48 @@ type TableDataType = {
      * 总条数
      */
     totalCount: number;
+    /**
+     * 选中的行数据
+     */
+    selections: any[];
+};
+
+// 【新增-修改弹窗】数据类型
+type GoodsDialogType = {
+    newTag: null;
+    item: any[];
+    imageUrl: string | null;
+    checkup: boolean | null;
+    ruleList: any[];
+    /**
+     * 弹窗数据
+     */
+    dataForm: {
+        id: number | null;
+        title: string | null;
+        code: number | null;
+        description: string | null;
+        initialPrice: number | null;
+        currentPrice: number | null;
+        ruleId: number | null;
+        image: string | null;
+        type: string | null;
+        tag: [];
+        partId: number | null;
+    };
+    upload: {
+        action: string;
+        headers: {
+            token: string | null;
+        };
+        data: {
+            id: number | null;
+        };
+    };
+    /**
+     * 表单校验规则
+     */
+    dataRule: Object;
 };
 
 const { proxy, appContext } =
@@ -331,6 +577,7 @@ const { proxy, appContext } =
 
 const isAuth = appContext.config.globalProperties.$isAuth as IsAuthFn;
 const http = appContext.config.globalProperties.$http as HttpFn;
+const baseUrl = appContext.config.globalProperties.$baseUrl as string;
 
 // 权限
 const { ROOT, GOODS_SELECT, GOODS_DELETE, GOODS_INSERT, GOODS_UPDATE } =
@@ -368,6 +615,93 @@ const tableData = reactive<TableDataType>({
     pageSize: 10,
     pageSizes: [10, 20, 50],
     totalCount: 0,
+    selections: [],
+});
+
+// 【新增-修改弹窗】是否显示
+const goodsDialogVisible = ref(false);
+// 【新增-修改弹窗】数据
+const goodsDialog = reactive<GoodsDialogType>({
+    newTag: null,
+    item: [],
+    imageUrl: null,
+    checkup: false,
+    ruleList: [],
+    dataForm: {
+        id: null,
+        title: null,
+        code: null,
+        description: null,
+        initialPrice: null,
+        currentPrice: null,
+        ruleId: null,
+        image: null,
+        type: null,
+        tag: [],
+        partId: null,
+    },
+    upload: {
+        action: `${baseUrl}/mis/goods/uploadImage`,
+        headers: {
+            token: localStorage.getItem("token"),
+        },
+        data: {
+            id: null,
+        },
+    },
+    dataRule: {
+        title: [
+            { required: true, message: "名称不能为空" },
+            { min: 2, message: "名称不能少于2个字符" },
+            {
+                pattern: "^[a-zA-Z0-9\u4e00-\u9fa5]{2,50}$",
+                message: "名称格式错误",
+            },
+        ],
+        code: [
+            { required: true, message: "编号不能为空" },
+            { min: 6, message: "编号不能少于6个字符" },
+            { pattern: "^[a-zA-Z0-9]{6,20}$", message: "编号格式错误" },
+        ],
+        description: [
+            {
+                required: true,
+                message: "简介信息不能为空",
+            },
+        ],
+        initialPrice: [
+            {
+                required: true,
+                message: "原价不能为空",
+            },
+            {
+                pattern: "(^[1-9]\\d*(\\.\\d{1,2})?$)|(^0(\\.\\d{1,2})?$",
+                message: "价格不正确",
+            },
+        ],
+        currentPrice: [
+            {
+                required: true,
+                message: "现价不能为空",
+            },
+            {
+                pattern: "(^[1-9]\\d*(\\.\\d{1,2})?$)|(^0(\\.\\d{1,2})?$",
+                message: "价格不正确",
+            },
+        ],
+        image: [
+            {
+                required: true,
+                message: "没有上传封面图片",
+            },
+        ],
+        type: [
+            {
+                required: true,
+                message: "没有选择套餐类别",
+            },
+        ],
+    },
 });
 
 // 查询【全部、已上架、已下架】
@@ -398,6 +732,11 @@ function sizeChangeHandle(size: number) {}
 
 // 当前页码变化
 function currentChangeHandle(page: number) {}
+
+// 监控按键 Enter
+function enterTag(e: KeyboardEvent) {
+    console.log("e: ", e);
+}
 </script>
 
 <style lang="less" scoped>
