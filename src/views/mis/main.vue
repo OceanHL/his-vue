@@ -414,7 +414,6 @@
 <script setup lang="ts">
 // import router from "@/router/index";
 import type { ComponentInternalInstance } from "vue";
-import type { RouteRecordNormalized } from "vue-router";
 import SvgIcon from "@/components/SvgIcon.vue";
 import { isURL } from "@/utils/validate";
 import { useRouter, useRoute } from "vue-router";

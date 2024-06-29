@@ -12,6 +12,11 @@ const routes: Array<RouteRecordRaw> = [
                 name: "FrontIndex",
                 component: () => import("../views/front/index.vue"),
             },
+            {
+                path: "goods/:id", // 传入商品ID
+                name: "FrontGoods",
+                component: () => import("../views/front/goods.vue"),
+            },
         ],
     },
     {

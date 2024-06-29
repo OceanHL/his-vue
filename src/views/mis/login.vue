@@ -63,10 +63,10 @@
 </template>
 
 <script setup lang="ts">
-import type { ComponentInternalInstanceI } from "./types/globalType";
+import type { ComponentInternalInstanceI } from "@/types/globalType";
 // 当用户登录成功后，需要使用路由对象跳转页面
 import { useRouter } from "vue-router";
-import { isUsername, isPassword } from "../../utils/validate";
+import { isUsername, isPassword } from "@/utils/validate";
 
 const router = useRouter();
 // router.push("/");
@@ -141,3 +141,4 @@ const login = () => {
 <style lang="less" scoped>
 @import url(./login.less);
 </style>
+../../types/globalType

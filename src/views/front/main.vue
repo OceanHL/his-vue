@@ -155,9 +155,14 @@
 </template>
 
 <script setup lang="ts">
+import type {
+    ComponentInternalInstanceI,
+    IsAuthFn,
+    HttpFn,
+} from "@/types/globalType";
 import { useRouter } from "vue-router";
 const router = useRouter();
-const { proxy } = getCurrentInstance();
+const { proxy } = getCurrentInstance() as ComponentInternalInstanceI;
 const header = reactive({
     keyword: "",
     tags: [

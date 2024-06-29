@@ -528,7 +528,7 @@ import type {
     ComponentInternalInstanceI,
     IsAuthFn,
     HttpFn,
-} from "./types/globalType";
+} from "@/types/globalType";
 import { PermissionEnum } from "@/utils/isAuth";
 import { Delete, Download, Upload } from "@element-plus/icons-vue";
 
