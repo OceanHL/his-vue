@@ -1,0 +1,115 @@
+@import url(../style.less);
+
+.goods-detail {
+    width: 1200px;
+    margin: 30px auto 0 auto;
+    display: flex;
+    // 图片
+    .cover {
+        width: 380px;
+        height: 380px;
+    }
+    // 属性描述
+    .property {
+        margin-left: 40px;
+        .title {
+            font-size: 20px;
+            color: @fc-1;
+            margin-top: 0;
+            margin-bottom: 0;
+        }
+        .desc {
+            font-style: 14px;
+            color: @fc-3;
+            margin-top: 10px;
+            margin-bottom: 30px;
+        }
+        .row {
+            display: flex;
+            margin-bottom: 20px;
+            label {
+                width: 80px;
+                font-size: 14px;
+                color: @fc-1;
+            }
+            .info {
+                font-size: 14px;
+                color: @fc-1;
+                display: flex;
+                .current-price {
+                    font-size: 30px;
+                    color: @fc-23;
+                    margin-top: -12px;
+                    &::before {
+                        content: "￥";
+                        font-size: 22px;
+                    }
+                }
+                .initial-price {
+                    font-size: 15px;
+                    color: @fc-3;
+                    text-decoration: line-through;
+                    margin-left: 10px;
+                }
+                .discount-img {
+                    width: 28px;
+                    height: auto;
+                    margin-right: 5px;
+                }
+                .property-icon {
+                    width: 20px;
+                    height: 20px;
+                    margin-right: 5px;
+                }
+                .service-tag {
+                    margin-right: 20px;
+                }
+            }
+        }
+        .operate {
+            display: flex;
+            margin-top: 25px;
+            .consult-btn {
+                border: 1px solid @bc-20;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                width: 130px;
+                height: 43px;
+                border-radius: 3px;
+                cursor: pointer;
+                user-select: none;
+                &:active {
+                    background-color: @btnac-11;
+                }
+                .consult-icon {
+                    width: 17px;
+                    height: 17px;
+                    margin-right: 5px;
+                }
+                span {
+                    font-size: 14px;
+                    color: @fc-23;
+                }
+            }
+            .buy-btn {
+                border: 1px solid @bc-20;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                width: 130px;
+                height: 43px;
+                border-radius: 3px;
+                cursor: pointer;
+                user-select: none;
+                background-color: @btnc-10;
+                font-size: 14px;
+                color: #fff;
+                margin-left: 15px;
+                &:active {
+                    background-color: @btnac-10;
+                }
+            }
+        }
+    }
+}
