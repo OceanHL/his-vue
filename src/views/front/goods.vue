@@ -1,4 +1,5 @@
 <template>
+    <!-- 商品信息 -->
     <div class="goods-detail">
         <!-- 套餐图片 -->
         <img :src="data.image" class="cover" />
@@ -96,6 +97,88 @@
             </div>
         </div>
     </div>
+    <!--横线  -->
+    <el-divider />
+    <!-- 商品内容（体检内容） -->
+    <div class="goods-content">
+        <!-- 商品摘要信息 -->
+        <el-descriptions title="商品摘要信息" :column="3" size="large" border>
+            <el-descriptions-item label="体检名称" label-align="center"
+                >{{ data.title }} {{ data.code }}</el-descriptions-item
+            >
+            <el-descriptions-item label="体检类型" label-align="center">{{
+                data.type
+            }}</el-descriptions-item>
+            <el-descriptions-item label="适用人群" label-align="center"
+                ><span class="tag" v-for="item in data.tag" :key="item">{{
+                    item
+                }}</span>
+            </el-descriptions-item>
+            <el-descriptions-item label="体检机构" label-align="center">
+                北京市神州大健康体检中心（东直门外大街234号）
+            </el-descriptions-item>
+            <el-descriptions-item label="体检项目" label-align="center">
+                {{ data.checkupCount }} 个
+            </el-descriptions-item>
+            <el-descriptions-item label="有效期" label-align="center">
+                一年
+            </el-descriptions-item>
+        </el-descriptions>
+        <!-- 体检项目明细 -->
+        <div class="detail">
+            <fieldset>
+                <legend>体检项目明细</legend>
+                <!-- 科室检查 -->
+                <div v-if="data.count_1 > 0">
+                    <h4 class="detail-title">
+                        科室检查({{ data.count_1 }})项目
+                    </h4>
+                    <table class="detail-table">
+                        <tr v-for="item in data.checkup_1" :key="item.title">
+                            <th>{{ item.title }}</th>
+                            <td>{{ item.content }}</td>
+                        </tr>
+                    </table>
+                </div>
+                <!-- 实验室检查 -->
+                <div v-if="data.count_2 > 0">
+                    <h4 class="detail-title">
+                        实验室检查({{ data.count_2 }})项目
+                    </h4>
+                    <table class="detail-table">
+                        <tr v-for="item in data.checkup_2" :key="item.title">
+                            <th>{{ item.title }}</th>
+                            <td>{{ item.content }}</td>
+                        </tr>
+                    </table>
+                </div>
+                <!-- 医技检查 -->
+                <div v-if="data.count_3 > 0">
+                    <h4 class="detail-title">
+                        医技检查({{ data.count_2 }})项目
+                    </h4>
+                    <table class="detail-table">
+                        <tr v-for="item in data.checkup_3" :key="item.title">
+                            <th>{{ item.title }}</th>
+                            <td>{{ item.content }}</td>
+                        </tr>
+                    </table>
+                </div>
+                <!-- 其他检查 -->
+                <div v-if="data.count_4 > 0">
+                    <h4 class="detail-title">
+                        其他检查({{ data.count_2 }})项目
+                    </h4>
+                    <table class="detail-table">
+                        <tr v-for="item in data.checkup_4" :key="item.title">
+                            <th>{{ item.title }}</th>
+                            <td>{{ item.content }}</td>
+                        </tr>
+                    </table>
+                </div>
+            </fieldset>
+        </div>
+    </div>
 </template>
 
 <script setup lang="ts">
@@ -121,14 +204,114 @@ const data = reactive({
     ruleName: null,
     type: "父母体检",
     tag: ["中老年", "女性", "男性"],
-    checkup_1: {},
-    checkup_2: {},
-    checkup_3: {},
-    checkup_4: {},
-    count_1: null,
-    count_2: null,
-    count_3: null,
-    count_4: null,
+    // 科室检查
+    checkup_1: [
+        {
+            title: "一般健康检查",
+            content:
+                "身高、体重、血压、心、肺、肝、脾、神经系统 ;甲状腺、乳腺、肛门、直肠",
+        },
+    ],
+    // 实验室检查
+    checkup_2: [
+        {
+            title: "C反应蛋白",
+            content: "升高常见于:急性炎症、组织坏死、恶性肿瘤、风湿病等疾病",
+        },
+        {
+            title: "肝功10项",
+            content:
+                "测定;总胆红素(T-Bil)测定;直接胆红素(D-Bil)测定;总胆汁酸(TBA)测定 ;胆碱脂酶(ChE)测定丙氨酸氨基转移酶(ALT)测定:天门冬氨酸氨基转移酶(ASD测定;总蛋白(TP)测定:白蛋白(AIb)测定:碱性磷酸酶(ALP)测定 -谷氨酰基转移酶(GGT)",
+        },
+        {
+            title: "甲功七项",
+            content:
+                "蛋白抗体(TGAb)测定;抗甲状腺过氧化物酶抗体(TPOAb)测定三碘甲状腺原氨酸(T3)测定;甲状腺素(T4)测定;促甲状腺激素(TSH)测定;游离三碘甲状腺原氨酸(FT3)测定;游离甲状腺素(FT4)测定;抗甲状腺球",
+        },
+        {
+            title: "尿常规",
+            content: "尿常规化学分析;尿有形成分分析",
+        },
+        {
+            title: "肾功5项",
+            content:
+                "尿素(Urea)测定 ;肌酐(Cr)测定;葡萄糖(Glu)测定;尿酸(UA)测定:β2微球蛋白(B2-MG)测定",
+        },
+        {
+            title: "糖化血红蛋白",
+            content: "检测近2-3个月内的平均血糖水平、用于糖尿病疗效观察",
+        },
+        {
+            title: "同型半胱氨酸",
+            content: "HCY升高是心血管疾病的重要危险因素",
+        },
+        {
+            title: "肌红蛋白",
+            content: "肌红蛋白可作为急性心肌梗死(AMI)诊断的早期最灵敏的指标",
+        },
+        {
+            title: "肌钙蛋白",
+            content: "肌钙蛋白",
+        },
+        {
+            title: "心肌酶谱",
+            content:
+                "肌酸激酶(CK)测定:肌酸激酶-MB同工酶活性(CK-MB)测定;乳酸脱氢酶(LD)测定;α羟基丁酸脱氢酶(α-HBD)测定",
+        },
+        {
+            title: "全血细胞分析",
+            content: "全血细胞分析(五分类)，有无贫血、感染、凝血功能是否正常等",
+        },
+        {
+            title: "血脂6项",
+            content:
+                "血脂6项:总胆固醇(TC)测定;甘油三酯(TG)测定;高密度脂蛋白胆固醇(HDL-C)测定;低密度脂蛋白胆固醇(LDL-C)测定;载脂蛋白AI(apOAI)测定:载脂蛋白B(apoB)测定",
+        },
+        {
+            title: "幽门螺杆菌抗体测定",
+            content: "细菌抗体测定",
+        },
+        {
+            title: "恶性肿瘤特异性生长因子",
+            content: "筛查早期肿瘤",
+        },
+    ],
+    // 医技检查
+    checkup_3: [
+        {
+            title: "泌尿系彩色多普勒超声检查",
+            content: "双肾、肾盂、输尿管、膀胱壁、[前列腺(男)]",
+        },
+        {
+            title: "肝胆胰脾彩色多普勒超声检查",
+            content: "肝胆胰脾彩色多普勒超声检查",
+        },
+        {
+            title: "数字化摄影(指CR/DR)",
+            content: "心、肺、膈等",
+        },
+        {
+            title: "超声骨密度检测",
+            content: "超声仪检查骨量情况，无骨质疏松、骨量减少",
+        },
+        {
+            title: "心电图",
+            content:
+                "检查心脏有否器官功能性病变，如:窦性心动过速、过缓、不齐以及各种心脏病的筛查",
+        },
+    ],
+    // 其他检查
+    checkup_4: [
+        {
+            title: "肿物标记物(男)",
+            content:
+                "男:甲胎蛋白(AFP)测定;癌胚抗原(CEA)测定,游离前列腺特异性抗原(FPSA)测定;总前列腺特异性抗原(TPSA)测定;糖类抗原CA-199测定",
+        },
+    ],
+    count_1: 1,
+    count_2: 1,
+    count_3: 1,
+    count_4: 1,
     checkupCount: null,
 });
 </script>

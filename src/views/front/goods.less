@@ -1,5 +1,6 @@
 @import url(../style.less);
 
+// 商品信息
 .goods-detail {
     width: 1200px;
     margin: 30px auto 0 auto;
@@ -110,6 +111,76 @@
                     background-color: @btnac-10;
                 }
             }
+        }
+    }
+}
+
+// 体检内容
+.goods-content {
+    margin-top: 30px;
+    .tag {
+        border-right: solid 1px @bc-1;
+        padding-right: 10px;
+        margin-right: 10px;
+        &:last-of-type {
+            border-right: none;
+            padding-right: 0;
+            margin-right: 0;
+        }
+    }
+    .detail {
+        margin-top: 50px;
+    }
+}
+fieldset {
+    border-top: solid 1px @bc-1;
+    border-left: none;
+    border-right: none;
+    border-bottom: none;
+    margin: 0;
+    padding: 0;
+    legend {
+        text-align: center;
+        font-size: 30px;
+        background-color: @bgc-22;
+        height: 70px;
+        line-height: 70px;
+        padding: 0 50px;
+        border-radius: 35p;
+        color: #fff;
+        margin-left: auto;
+        margin-right: auto;
+        margin-top: 30px;
+        margin-bottom: 50px;
+    }
+    .detail-title {
+        color: @fc-26;
+        margin-top: 0;
+        margin-bottom: 20px;
+    }
+    .detail-table {
+        width: 100%;
+        border: solid 1px @bc-22;
+        border-collapse: collapse;
+        border-spacing: 0;
+        margin-bottom: 35px;
+        th {
+            font-size: 14px;
+            line-height: 1.7;
+            padding: 12px 15px;
+            font-weight: normal;
+            border: solid 1px @bc-22;
+            background-color: @bgc-31;
+            color: @fc-25;
+            width: 200px;
+        }
+        td {
+            font-size: 14px;
+            line-height: 1.7;
+            padding: 12px 15px;
+            font-weight: normal;
+            border: solid 1px @bc-22;
+            color: @fc-26;
         }
     }
 }
