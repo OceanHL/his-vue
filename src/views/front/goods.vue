@@ -88,6 +88,7 @@
             <div class="operate">
                 <div class="consult-btn" @click="consultHandle">
                     <img
+                        class="consult-icon"
                         src="@/assets/front/goods/consult.png"
                         alt="咨询客服"
                     />
@@ -383,24 +384,26 @@
                     <!-- 体检中 -->
                     <li class="item">
                         <div class="left">体检中</div>
-                        <ul class="right">
-                            <li>
-                                需空腹检查的项目为抽血、腹部B超、数字胃肠，胃镜及其它标注的体检
-                            </li>
+                        <div class="right">
+                            <ul>
+                                <li>
+                                    需空腹检查的项目为抽血、腹部B超、数字胃肠，胃镜及其它标注的体检
+                                </li>
 
-                            <li>
-                                做膀胱、子宫、附件B超时请勿排尿，如无尿需饮水至膀胱充盈。做妇科
-                            </li>
-                            <li>
-                                未婚女性不做妇科检查;怀孕的女性请预先告知医护人员,不安排做放射
-                            </li>
-                            <li>
-                                做放射线检查前,请您除去身上佩戴的金银、玉器等饰物。
-                            </li>
-                            <li>
-                                核磁共振检查，应禁止佩带首饰、手表、传呼、手机等金属物品，磁卡
-                            </li>
-                        </ul>
+                                <li>
+                                    做膀胱、子宫、附件B超时请勿排尿，如无尿需饮水至膀胱充盈。做妇科
+                                </li>
+                                <li>
+                                    未婚女性不做妇科检查;怀孕的女性请预先告知医护人员,不安排做放射
+                                </li>
+                                <li>
+                                    做放射线检查前,请您除去身上佩戴的金银、玉器等饰物。
+                                </li>
+                                <li>
+                                    核磁共振检查，应禁止佩带首饰、手表、传呼、手机等金属物品，磁卡
+                                </li>
+                            </ul>
+                        </div>
                     </li>
                     <!-- 体检后 -->
                     <li class="item">
@@ -435,7 +438,7 @@ const dataForm = reactive({
     number: 1,
 });
 
-const data = reactive({
+/* const data = reactive({
     code: "117GWMN00",
     title: "新感恩敬老中级体检套餐",
     description:
@@ -554,6 +557,31 @@ const data = reactive({
     count_2: 1,
     count_3: 1,
     count_4: 1,
+    checkupCount: null,
+}); */
+
+const data = reactive({
+    code: null,
+    title: null,
+    description: null,
+    image: null,
+    initialPrice: null,
+    currentPrice: null,
+    ruleName: null,
+    type: null,
+    tag: [],
+    // 科室检查
+    checkup_1: [],
+    // 实验室检查
+    checkup_2: [],
+    // 医技检查
+    checkup_3: [],
+    // 其他检查
+    checkup_4: [],
+    count_1: null,
+    count_2: null,
+    count_3: null,
+    count_4: null,
     checkupCount: null,
 });
 </script>

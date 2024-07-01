@@ -291,6 +291,50 @@ fieldset {
             }
         }
         .look-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            .item {
+                display: flex;
+                margin-bottom: 50px;
+                .left {
+                    width: 122px;
+                    height: 106px;
+                    background-image: url(@/assets/front/goods/polygon.png);
+                    background-size: 122px 106px;
+                    text-align: center;
+                    line-height: 106px;
+                    font-size: 22px;
+                    color: @fc-24;
+                }
+                .right {
+                    margin-left: 20px;
+                    ul {
+                        list-style: none;
+                        margin: 0;
+                        padding: 0;
+                        li {
+                            display: flex;
+                            font-size: 18px;
+                            color: @fc-2;
+                            margin-bottom: 18px;
+                            &:last-of-type {
+                                margin-bottom: 0;
+                            }
+                            &::before {
+                                display: block;
+                                content: "";
+                                width: 24px;
+                                height: 24px;
+                                background-image: url(@/assets/front/goods/tick.png);
+                                background-size: 24px;
+                                margin-right: 10px;
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }
